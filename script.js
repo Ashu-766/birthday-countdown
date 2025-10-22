@@ -1,45 +1,61 @@
 async function loadConfig() {
-  const res = await fetch('config.json', { cache: 'no-store' });
-  return await res.json();
+  const response = await fetch("config.json");
+  return await response.json();
 }
 
-function countdown() {
-  const target = new Date("2025-10-26T00:00:00");
+function formatCountdown(targetDate) {
   const now = new Date();
-  const diff = target - now;
-  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  document.getElementById('countdown').innerText =
-    `${d} days ${h} hrs to go 💫`;
+  const diff = targetDate - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hrs = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  return `${days} days ${hrs} hrs to go 💫`;
 }
 
-function openModal(day) {
-  document.getElementById('modalTitle').innerText = day.label;
-  document.getElementById('modalImage').src = day.image || '';
-  document.getElementById('modalText').innerText = day.text;
-  document.getElementById('modal').style.display = 'flex';
+function createDayCard(day, today) {
+  const card = document.createElement("div");
+  card.className = "day-card";
+  const dayDate = new Date(day.date);
+  const isUnlocked = today >= dayDate;
+
+  card.innerHTML = `
+    <div class="day-title">${day.title} ${!isUnlocked ? "🔒" : ""}</div>
+  `;
+
+  if (isUnlocked) {
+    card.addEventListener("click", () => showPopup(day));
+  } else {
+    card.classList.add("locked");
+  }
+
+  return card;
 }
 
-function closeModal() {
-  document.getElementById('modal').style.display = 'none';
+function showPopup(day) {
+  const popup = document.getElementById("popup");
+  const img = document.getElementById("popupImage");
+  const text = document.getElementById("popupText");
+
+  img.src = day.image;
+  text.innerHTML = day.lines.map(l => `<p>${l}</p>`).join("");
+  popup.classList.remove("hidden");
 }
 
-loadConfig().then(cfg => {
+function closePopup() {
+  document.getElementById("popup").classList.add("hidden");
+}
+
+async function init() {
+  const config = await loadConfig();
   const today = new Date();
-  const daysContainer = document.getElementById('days');
-  cfg.days.forEach(d => {
-    const card = document.createElement('div');
-    card.className = 'day-card';
-    const dayDate = new Date(d.date);
-    card.innerHTML = `<strong>${d.label}</strong>`;
-    if (dayDate <= today) {
-      card.onclick = () => openModal(d);
-    } else {
-      card.classList.add('locked');
-    }
-    daysContainer.appendChild(card);
-  });
-});
+  const birthday = new Date(config.birthdayDate);
+  document.getElementById("countdown").textContent = formatCountdown(birthday);
 
-setInterval(countdown, 60000);
-countdown();
+  const daysContainer = document.getElementById("daysContainer");
+  config.days.forEach(day => {
+    daysContainer.appendChild(createDayCard(day, today));
+  });
+
+  document.getElementById("closePopup").addEventListener("click", closePopup);
+}
+
+init();
