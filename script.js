@@ -1,3 +1,4 @@
+// Day Data
 const days = [
   { day: 1, date: "Wed Oct 01 2025", title: "The Beginning 💖", image: "https://picsum.photos/400?1", message: "Every beautiful story has a beginning, and ours started with a spark that still glows." },
   { day: 2, date: "Thu Oct 02 2025", title: "The Smile 😊", image: "https://picsum.photos/400?2", message: "Your smile is my sunrise. Every morning feels brighter because of you." },
