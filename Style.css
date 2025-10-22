@@ -1,29 +1,44 @@
 body {
   font-family: 'Poppins', sans-serif;
-  background: #fff6fa;
+  background: linear-gradient(135deg, #ffe0eb, #fff6fa);
   color: #333;
-  text-align: center;
+  margin: 0;
   padding: 20px;
+  text-align: center;
 }
 
-.header {
+.header h1 {
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: #d88fbf;
+}
+
+.header p {
+  margin-bottom: 12px;
+  color: #6b5b6a;
+}
+
+#countdown {
+  font-size: 18px;
+  font-weight: 500;
   margin-bottom: 20px;
 }
 
 .days-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .day-card {
-  background: #ffe0eb;
-  border-radius: 15px;
-  padding: 15px;
-  width: 300px;
+  background: #ffffffcc;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.2s, background 0.2s;
 }
 
 .day-card.locked {
@@ -33,8 +48,14 @@ body {
 }
 
 .day-card:hover:not(.locked) {
-  transform: scale(1.03);
+  transform: scale(1.05);
   background: #ffcfe2;
+}
+
+.day-title {
+  font-weight: 700;
+  color: #d88fbf;
+  font-size: 16px;
 }
 
 .popup {
@@ -45,6 +66,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 }
 
 .popup.hidden { display: none; }
@@ -53,20 +75,27 @@ body {
   background: #fff;
   border-radius: 15px;
   padding: 20px;
-  width: 80%;
+  width: 90%;
   max-width: 500px;
   position: relative;
+  text-align: left;
 }
 
 .popup-content img {
   width: 100%;
   border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.popup-text p {
+  margin: 6px 0;
+  line-height: 1.4;
 }
 
 .close {
   position: absolute;
   top: 10px;
   right: 20px;
-  cursor: pointer;
   font-size: 24px;
+  cursor: pointer;
 }
