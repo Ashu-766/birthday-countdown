@@ -1,6 +1,6 @@
 async function loadConfig() {
-  const response = await fetch("config.json");
-  return await response.json();
+  const res = await fetch('config.json');
+  return await res.json();
 }
 
 function formatCountdown(targetDate) {
@@ -15,28 +15,19 @@ function createDayCard(day, today) {
   const card = document.createElement("div");
   card.className = "day-card";
   const dayDate = new Date(day.date);
-  const isUnlocked = today >= dayDate;
+  const unlocked = today >= dayDate;
 
-  card.innerHTML = `
-    <div class="day-title">${day.title} ${!isUnlocked ? "🔒" : ""}</div>
-  `;
-
-  if (isUnlocked) {
-    card.addEventListener("click", () => showPopup(day));
-  } else {
-    card.classList.add("locked");
-  }
+  card.innerHTML = `<div class="day-title">${day.title} ${!unlocked ? "🔒" : ""}</div>`;
+  if (unlocked) card.addEventListener("click", () => showPopup(day));
+  else card.classList.add("locked");
 
   return card;
 }
 
 function showPopup(day) {
   const popup = document.getElementById("popup");
-  const img = document.getElementById("popupImage");
-  const text = document.getElementById("popupText");
-
-  img.src = day.image;
-  text.innerHTML = day.lines.map(l => `<p>${l}</p>`).join("");
+  document.getElementById("popupImage").src = day.image;
+  document.getElementById("popupText").innerHTML = day.lines.map(l => `<p>${l}</p>`).join("");
   popup.classList.remove("hidden");
 }
 
@@ -50,9 +41,9 @@ async function init() {
   const birthday = new Date(config.birthdayDate);
   document.getElementById("countdown").textContent = formatCountdown(birthday);
 
-  const daysContainer = document.getElementById("daysContainer");
+  const container = document.getElementById("daysContainer");
   config.days.forEach(day => {
-    daysContainer.appendChild(createDayCard(day, today));
+    container.appendChild(createDayCard(day, today));
   });
 
   document.getElementById("closePopup").addEventListener("click", closePopup);
