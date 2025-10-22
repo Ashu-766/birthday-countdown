@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Birthday Countdown for Minnu (Nemo)</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Countdown for Minnu (Nemo)</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="header">
-    <h1>🎂 Birthday Countdown for Minnu (Nemo)</h1>
-    <p>Every day is special with you 💖</p>
-    <div id="countdown"></div>
+
+<div class="header">
+  <h1>🎂 Birthday Countdown for Minnu (Nemo)</h1>
+  <p>Every day is special with you 💖</p>
+  <div id="countdown"></div>
+</div>
+
+<div id="daysContainer" class="days-container"></div>
+
+<div id="popup" class="popup hidden">
+  <div class="popup-content">
+    <span id="closePopup" class="close">&times;</span>
+    <img id="popupImage" src="" alt="Day image" />
+    <div id="popupText" class="popup-text"></div>
   </div>
+</div>
 
-  <div id="daysContainer" class="days-container"></div>
-
-  <div id="popup" class="popup hidden">
-    <div class="popup-content">
-      <span id="closePopup" class="close">&times;</span>
-      <img id="popupImage" src="" alt="Day image" />
-      <div id="popupText" class="popup-text"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
