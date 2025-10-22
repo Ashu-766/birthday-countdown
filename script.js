@@ -1,7 +1,6 @@
 const birthdayDate = new Date("2025-10-26T00:00:00");
 const startDate = new Date("2025-10-01T00:00:00");
 
-// === Countdown ===
 function updateCountdown() {
   const now = new Date();
   const diff = birthdayDate - now;
@@ -16,7 +15,6 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// === Load JSON and Display All Days ===
 fetch("days.json")
   .then(res => res.json())
   .then(daysData => {
@@ -29,18 +27,28 @@ fetch("days.json")
     daysData.forEach(day => {
       const card = document.createElement("div");
       card.className = "day-card";
-      if (day.day > diffDays) card.classList.add("locked");
-
-      const content = `
-        <h3>Day ${day.day} — ${day.date}</h3>
-        <p>${day.message}</p>
-        ${day.image ? `<img src="${day.image}" alt="Day ${day.day}">` : ""}
-      `;
-      card.innerHTML = content;
+      card.innerHTML = `<strong>Day ${day.day} — ${day.label}</strong>`;
+      if (day.day > diffDays) {
+        card.classList.add("locked");
+      } else {
+        card.addEventListener("click", () => openModal(day));
+      }
       container.appendChild(card);
     });
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById("days-container").innerText = "Failed to load content.";
   });
+
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modal-title");
+const modalImage = document.getElementById("modal-image");
+const modalMessage = document.getElementById("modal-message");
+const closeBtn = document.getElementById("closeBtn");
+
+function openModal(day) {
+  modalTitle.innerText = `Day ${day.day} — ${day.label}`;
+  modalImage.src = day.image;
+  modalMessage.innerText = day.message;
+  modal.style.display = "flex";
+}
+
+closeBtn.onclick = () => (modal.style.display = "none");
+window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
