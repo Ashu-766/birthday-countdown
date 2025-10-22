@@ -1,7 +1,7 @@
-// === Configuration ===
-const birthdayDate = new Date("2025-10-26T00:00:00"); // 🎂 Actual birthday date
+const birthdayDate = new Date("2025-10-26T00:00:00");
+const startDate = new Date("2025-10-01T00:00:00");
 
-// === Countdown timer ===
+// === Countdown ===
 function updateCountdown() {
   const now = new Date();
   const diff = birthdayDate - now;
@@ -16,27 +16,31 @@ function updateCountdown() {
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// === Load daily messages ===
+// === Load JSON and Display All Days ===
 fetch("days.json")
-  .then(response => response.json())
+  .then(res => res.json())
   .then(daysData => {
-    const now = new Date();
-    const startDate = new Date("2025-10-01T00:00:00");
-    const diffDays = Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    const todayData = daysData.find(d => d.day === diffDays);
+    const container = document.getElementById("days-container");
+    container.innerHTML = "";
 
-    const card = document.getElementById("day-content");
-    if (todayData) {
-      card.innerHTML = `
-        <h3>Day ${todayData.day}</h3>
-        <p>${todayData.message}</p>
-        ${todayData.image ? `<img src="${todayData.image}" alt="Day ${todayData.day}">` : ""}
+    const today = new Date();
+    const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+    daysData.forEach(day => {
+      const card = document.createElement("div");
+      card.className = "day-card";
+      if (day.day > diffDays) card.classList.add("locked");
+
+      const content = `
+        <h3>Day ${day.day} — ${day.date}</h3>
+        <p>${day.message}</p>
+        ${day.image ? `<img src="${day.image}" alt="Day ${day.day}">` : ""}
       `;
-    } else {
-      card.innerHTML = `<p>✨ Waiting for the countdown to start on Oct 1 ✨</p>`;
-    }
+      card.innerHTML = content;
+      container.appendChild(card);
+    });
   })
-  .catch(error => {
-    console.error("Error loading JSON:", error);
-    document.getElementById("day-content").innerText = "Failed to load content.";
+  .catch(err => {
+    console.error(err);
+    document.getElementById("days-container").innerText = "Failed to load content.";
   });
