@@ -1,54 +1,45 @@
-const birthdayDate = new Date("2025-10-26T00:00:00");
-const startDate = new Date("2025-10-01T00:00:00");
-
-function updateCountdown() {
-  const now = new Date();
-  const diff = birthdayDate - now;
-  if (diff <= 0) {
-    document.getElementById("countdown").innerText = "🎉 It's Minnu's Birthday Today! 🥳";
-    return;
-  }
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  document.getElementById("countdown").innerText = `${days} days ${hours} hrs to go 💫`;
+async function loadConfig() {
+  const res = await fetch('config.json', { cache: 'no-store' });
+  return await res.json();
 }
-setInterval(updateCountdown, 1000);
-updateCountdown();
 
-fetch("days.json")
-  .then(res => res.json())
-  .then(daysData => {
-    const container = document.getElementById("days-container");
-    container.innerHTML = "";
-
-    const today = new Date();
-    const diffDays = Math.floor((today - startDate) / (1000 * 60 * 60 * 24)) + 1;
-
-    daysData.forEach(day => {
-      const card = document.createElement("div");
-      card.className = "day-card";
-      card.innerHTML = `<strong>Day ${day.day} — ${day.label}</strong>`;
-      if (day.day > diffDays) {
-        card.classList.add("locked");
-      } else {
-        card.addEventListener("click", () => openModal(day));
-      }
-      container.appendChild(card);
-    });
-  });
-
-const modal = document.getElementById("modal");
-const modalTitle = document.getElementById("modal-title");
-const modalImage = document.getElementById("modal-image");
-const modalMessage = document.getElementById("modal-message");
-const closeBtn = document.getElementById("closeBtn");
+function countdown() {
+  const target = new Date("2025-10-26T00:00:00");
+  const now = new Date();
+  const diff = target - now;
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  document.getElementById('countdown').innerText =
+    `${d} days ${h} hrs to go 💫`;
+}
 
 function openModal(day) {
-  modalTitle.innerText = `Day ${day.day} — ${day.label}`;
-  modalImage.src = day.image;
-  modalMessage.innerText = day.message;
-  modal.style.display = "flex";
+  document.getElementById('modalTitle').innerText = day.label;
+  document.getElementById('modalImage').src = day.image || '';
+  document.getElementById('modalText').innerText = day.text;
+  document.getElementById('modal').style.display = 'flex';
 }
 
-closeBtn.onclick = () => (modal.style.display = "none");
-window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+loadConfig().then(cfg => {
+  const today = new Date();
+  const daysContainer = document.getElementById('days');
+  cfg.days.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    const dayDate = new Date(d.date);
+    card.innerHTML = `<strong>${d.label}</strong>`;
+    if (dayDate <= today) {
+      card.onclick = () => openModal(d);
+    } else {
+      card.classList.add('locked');
+    }
+    daysContainer.appendChild(card);
+  });
+});
+
+setInterval(countdown, 60000);
+countdown();
