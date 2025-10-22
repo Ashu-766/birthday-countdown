@@ -1,30 +1,26 @@
 {
+  "birthdayDate": "2025-10-26",
   "days": [
-    { "label": "Day 1 - Wed Oct 01 2025", "date": "2025-10-01", "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", "text": "Our story begins here — the first day of this little countdown to you ❤️" },
-    { "label": "Day 2 - Thu Oct 02 2025", "date": "2025-10-02", "image": "https://images.unsplash.com/photo-1502720705749-3cfa86e4e1fa", "text": "Every sunrise feels warmer knowing you exist ☀️" },
-    { "label": "Day 3 - Fri Oct 03 2025", "date": "2025-10-03", "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e", "text": "You make ordinary days feel magical ✨" },
-    { "label": "Day 4 - Sat Oct 04 2025", "date": "2025-10-04", "image": "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92", "text": "A smile from you can change everything 💫" },
-    { "label": "Day 5 - Sun Oct 05 2025", "date": "2025-10-05", "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330", "text": "Our laughter is my favorite sound 🎶" },
-    { "label": "Day 6 - Mon Oct 06 2025", "date": "2025-10-06", "image": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e", "text": "Even distance bends before love 💌" },
-    { "label": "Day 7 - Tue Oct 07 2025", "date": "2025-10-07", "image": "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d", "text": "You and me — that’s the definition of home 🏡" },
-    { "label": "Day 8 - Wed Oct 08 2025", "date": "2025-10-08", "image": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0", "text": "Your eyes hold every answer I ever needed 💖" },
-    { "label": "Day 9 - Thu Oct 09 2025", "date": "2025-10-09", "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9", "text": "If love were art, you’d be the masterpiece 🎨" },
-    { "label": "Day 10 - Fri Oct 10 2025", "date": "2025-10-10", "image": "https://images.unsplash.com/photo-1506089676908-3592f7389d4d", "text": "Your presence feels like poetry 🌹" },
-    { "label": "Day 11 - Sat Oct 11 2025", "date": "2025-10-11", "image": "https://images.unsplash.com/photo-1511988617509-a57c8a288659", "text": "Every second with you is a heartbeat of joy 💓" },
-    { "label": "Day 12 - Sun Oct 12 2025", "date": "2025-10-12", "image": "https://images.unsplash.com/photo-1496483648148-47c686dc86a8", "text": "Your name feels like home when I whisper it 💕" },
-    { "label": "Day 13 - Mon Oct 13 2025", "date": "2025-10-13", "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330", "text": "You light up my dull days with your magic ✨" },
-    { "label": "Day 14 - Tue Oct 14 2025", "date": "2025-10-14", "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", "text": "No matter what, my heart finds you every time 💞" },
-    { "label": "Day 15 - Wed Oct 15 2025", "date": "2025-10-15", "image": "https://images.unsplash.com/photo-1502720705749-3cfa86e4e1fa", "text": "You’re the calm to my chaos 🌈" },
-    { "label": "Day 16 - Thu Oct 16 2025", "date": "2025-10-16", "image": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e", "text": "Your laugh is my favorite addiction 💗" },
-    { "label": "Day 17 - Fri Oct 17 2025", "date": "2025-10-17", "image": "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92", "text": "In your arms, the world stops spinning 💫" },
-    { "label": "Day 18 - Sat Oct 18 2025", "date": "2025-10-18", "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330", "text": "Every heartbeat spells your name 💌" },
-    { "label": "Day 19 - Sun Oct 19 2025", "date": "2025-10-19", "image": "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e", "text": "You are the softest part of my every story 🌷" },
-    { "label": "Day 20 - Mon Oct 20 2025", "date": "2025-10-20", "image": "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d", "text": "You’re my peace after long days 🕊️" },
-    { "label": "Day 21 - Tue Oct 21 2025", "date": "2025-10-21", "image": "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0", "text": "The way you care — it’s my forever favorite 💝" },
-    { "label": "Day 22 - Wed Oct 22 2025", "date": "2025-10-22", "image": "https://images.unsplash.com/photo-1517841905240-472988babdf9", "text": "Your kindness is my daily reminder of love 🌸" },
-    { "label": "Day 23 - Thu Oct 23 2025", "date": "2025-10-23", "image": "https://images.unsplash.com/photo-1506089676908-3592f7389d4d", "text": "Your smile makes the stars jealous ✨" },
-    { "label": "Day 24 - Fri Oct 24 2025", "date": "2025-10-24", "image": "https://images.unsplash.com/photo-1511988617509-a57c8a288659", "text": "You make me believe in perfect moments 💗" },
-    { "label": "Day 25 - Sat Oct 25 2025", "date": "2025-10-25", "image": "https://images.unsplash.com/photo-1496483648148-47c686dc86a8", "text": "The world feels complete when you’re near 💞" },
-    { "label": "Day 26 - Sun Oct 26 2025", "date": "2025-10-26", "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", "text": "Happy Birthday, my love 💖 You’re my forever reason to smile." }
+    {
+      "day": 1,
+      "date": "2025-10-01",
+      "title": "Day 1 - Wed Oct 01 2025",
+      "image": "https://picsum.photos/500/300?random=1",
+      "lines": ["You’re my sunrise and my calm night.", "Every moment with you begins with a smile."]
+    },
+    {
+      "day": 2,
+      "date": "2025-10-02",
+      "title": "Day 2 - Thu Oct 02 2025",
+      "image": "https://picsum.photos/500/300?random=2",
+      "lines": ["Your laughter is my favorite sound.", "Even silence feels beautiful with you."]
+    },
+    {
+      "day": 3,
+      "date": "2025-10-03",
+      "title": "Day 3 - Fri Oct 03 2025",
+      "image": "https://picsum.photos/500/300?random=3",
+      "lines": ["Every heartbeat whispers your name.", "You make ordinary moments magical."]
+    }
   ]
 }
