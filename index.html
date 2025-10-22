@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Birthday Countdown</title>
+  <style>
+    :root{
+      --bg:#fff9fb;
+      --card:#ffffffcc;
+      --accent:#d88fbf;
+      --accent-2:#b89ad6;
+      --gold:#c99a48;
+      --text:#333;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:linear-gradient(135deg,var(--bg), #fff); color:var(--text); min-height:100vh}
+    .hero{padding:28px 16px; text-align:center; position:relative}
+    .title{font-size:28px; font-weight:700; color:var(--accent-2); margin:6px}
+    .subtitle{color:#6b5b6a; margin-bottom:12px}
+    .countdown{font-size:18px; margin-top:6px}
+    .container{max-width:720px;margin:0 auto;padding:12px}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    .day-card{background:var(--card); padding:18px;border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
+    .day-card.locked{opacity:0.6; filter:grayscale(0.1)}
+    .day-info{flex:1}
+    .day-title{font-weight:700;color:var(--accent)}
+    .day-date{font-size:13px;color:#6b5b6a;margin-top:4px}
+    .day-thumb{width:110px;height:78px;border-radius:12px;object-fit:cover;flex-shrink:0;background:linear-gradient(45deg,var(--accent),var(--accent-2))}
+    .open-btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:none;padding:8px 12px;border-radius:10px;cursor:pointer}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:all .18s}
+    .modal.show{opacity:1;pointer-events:auto}
+    .card{background:linear-gradient(180deg,#fff,#fff);padding:18px;border-radius:14px;max-width:700px;width:96%;max-height:86vh;overflow:auto;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+    .modal-head{display:flex;align-items:center;justify-content:space-between}
+    .modal-img{width:100%;height:320px;object-fit:cover;border-radius:10px;margin-top:12px}
+    .lines{margin-top:12px;font-size:15px;color:#333}
+
+    .hearts{position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
+    .heart{position:absolute;width:28px;height:28px;background:radial-gradient(circle at 30% 30%, #fff8, transparent),linear-gradient(135deg,var(--accent),var(--accent-2));transform:rotate(-25deg);clip-path:polygon(50% 0%, 100% 30%, 80% 80%, 50% 100%, 20% 80%, 0% 30%);}
+
+    .confetti-canvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:60}
+
+    .admin-btn{position:fixed;right:14px;bottom:18px;background:#111;padding:10px 12px;border-radius:12px;color:white;cursor:pointer;z-index:70}
+    .admin-lock{position:fixed;right:14px;bottom:72px;background:var(--gold);padding:10px 12px;border-radius:12px;color:#111;cursor:pointer;z-index:70}
+
+    .final-burst{background:linear-gradient(90deg,var(--accent-2),var(--gold));color:white;padding:14px;border-radius:12px;text-align:center;font-weight:700;box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+
+    @media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+  <canvas class="confetti-canvas" id="confetti"></canvas>
+  <div class="hero">
+    <div class="title">Birthday Countdown — For Her</div>
+    <div class="subtitle">Soft pastel romantic • Elegant minimalist</div>
+    <div class="countdown" id="timeUntil"></div>
+  </div>
+
+  <div class="container">
+    <div id="finalBanner" style="display:none" class="final-burst">Happy Birthday! 🎉</div>
+    <div class="grid" id="daysGrid"></div>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="card">
+      <div class="modal-head"><div id="modalTitle"></div><button onclick="closeModal()">Close</button></div>
+      <img id="modalImage" class="modal-img" src="" alt="photo">
+      <div id="modalLines" class="lines"></div>
+    </div>
+  </div>
+
+  <button class="admin-btn" onclick="openAdmin()">Admin</button>
+  <button class="admin-lock" onclick="toggleAdminLock()">🔒</button>
+
+  <script>
+  const ADMIN_PASSWORD = '1234';
+  const BIRTHDAY = '2025-10-26';
+  const sampleConfig = {
+    "title":"Happy Birthday Baby",
+    "musicUrl":"",
+    "days":[
+      {"day":1,"label":"Day 1","image":"https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=800&q=60","lines":["To my healthy little baby.","I absolutely adore when you eat and take care of yourself."],"bg":"#fff","textColor":"#333"},
+      {"day":26,"label":"Day 26 - Birthday","image":"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=60","lines":["Happy Birthday my love!","You mean the world to me."],"bg":"#fff8f2","textColor":"#111"}
+    ]
+  };
+
+  async function loadConfig(){
+    try{
+      const r = await fetch('config.json', {cache: 'no-store'});
+      if(!r.ok) throw new Error('no config');
+      const j = await r.json();
+      return j;
+    }catch(e){
+      return sampleConfig;
+    }
+  }
+
+  function daysBetween(start, end){
+    const ms = 24*60*60*1000;
+    return Math.round((end-start)/ms);
+  }
+
+  function formatShort(d){
+    return d.toDateString();
+  }
+
+  function showCountdown(){
+    const now = new Date();
+    const target = new Date(BIRTHDAY+'T00:00:00');
+    const ms = target - now;
+    if(ms<=0){document.getElementById('timeUntil').textContent = 'It\\'s her birthday!'; return}
+    const days = Math.floor(ms/(24*60*60*1000));
+    const hrs = Math.floor(ms%(24*60*60*1000)/(1000*60*60));
+    const mins = Math.floor(ms%(1000*60*60)/(1000*60));
+    document.getElementById('timeUntil').textContent = `Time until birthday: ${days}d ${hrs}h ${mins}m`;
+  }
+
+  async function render(){
+    const cfg = await loadConfig();
+    const grid = document.getElementById('daysGrid');
+    grid.innerHTML='';
+    const days = cfg.days.slice().sort((a,b)=>a.day-b.day);
+    const today = new Date();
+    const bd = new Date(BIRTHDAY+'T00:00:00');
+
+    const isBirthday = (new Date().toDateString() === bd.toDateString());
+    if(isBirthday){
+      document.getElementById('finalBanner').style.display='block';
+      playFinalMusic(cfg.musicUrl);
+      confettiBurst();
+    }
+
+    for(const d of days){
+      const dayDate = new Date(bd.getTime() - (26 - d.day)*24*60*60*1000);
+      const unlocked = (new Date().setHours(0,0,0,0) >= new Date(dayDate).setHours(0,0,0,0));
+      const card = document.createElement('div');
+      card.className='day-card'+(unlocked? '':' locked');
+      card.style.background = d.bg || 'var(--card)';
+      const img = document.createElement('img'); img.className='day-thumb'; img.src=d.image||'';
+      const info = document.createElement('div'); info.className='day-info';
+      const title = document.createElement('div'); title.className='day-title'; title.textContent=d.label || `Day ${d.day}`;
+      const date = document.createElement('div'); date.className='day-date'; date.textContent = formatShort(dayDate);
+      const btn = document.createElement('button'); btn.className='open-btn'; btn.textContent = unlocked? 'Open':'Locked';
+      btn.disabled = !unlocked;
+      btn.onclick = ()=>openDay(d);
+      info.appendChild(title); info.appendChild(date); info.appendChild(btn);
+      card.appendChild(img); card.appendChild(info);
+      grid.appendChild(card);
+    }
+
+    showCountdown();
+  }
+
+  function openDay(day){
+    document.getElementById('modal').classList.add('show');
+    document.getElementById('modalTitle').textContent = day.label || `Day ${day.day}`;
+    const img = document.getElementById('modalImage'); img.src = day.image || '';
+    const linesEl = document.getElementById('modalLines'); linesEl.innerHTML='';
+    (day.lines||[]).forEach(l=>{ const p=document.createElement('p'); p.textContent=l; linesEl.appendChild(p);} )
+    heartsFloat();
+    confettiBurst();
+  }
+  function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+  function heartsFloat(){
+    const container = document.getElementById('hearts');
+    for(let i=0;i<14;i++){
+      const h = document.createElement('div'); h.className='heart';
+      const left = Math.random()*90; const size = 12+Math.random()*30;
+      h.style.left = left+'%'; h.style.bottom = '-40px'; h.style.width=size+'px'; h.style.height=size+'px';
+      h.style.opacity = 0.8*Math.random()+0.2;
+      container.appendChild(h);
+      const duration = 3000+Math.random()*3500;
+      h.animate([{transform:'translateY(0) rotate(-25deg)', opacity:1},{transform:'translateY(-600px) rotate(40deg)', opacity:0}], {duration:duration, easing:'linear'});
+      setTimeout(()=>h.remove(), duration);
+    }
+  }
+
+  function confettiBurst(){
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    const pieces = [];
+    for(let i=0;i<120;i++){
+      pieces.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height-100, r:4+Math.random()*8, vx:(Math.random()-0.5)*8, vy:Math.random()*6, color: ['#fde68a','#fbcfe8','#c7b3ff','#ffd7a9'][Math.floor(Math.random()*4)]});
+    }
+    let t=0;
+    const id = setInterval(()=>{
+      t+=1; ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(const p of pieces){ p.x += p.vx; p.y += p.vy; p.vy += 0.12; ctx.fillStyle=p.color; ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r,p.r*0.6,0,0,Math.PI*2); ctx.fill(); }
+      if(t>80) { clearInterval(id); ctx.clearRect(0,0,canvas.width,canvas.height);} }, 20);
+  }
+
+  function playFinalMusic(url){ if(!url) return; try{ const a = new Audio(url); a.play().catch(()=>console.log('autoplay blocked')); }catch(e){console.log(e)} }
+
+  let CONFIG = null;
+  let adminUnlocked = false;
+  function toggleAdminLock(){ adminUnlocked = !adminUnlocked; alert(adminUnlocked? 'Admin unlocked (UI)'.toUpperCase():'Admin locked'); }
+  function openAdmin(){
+    if(!adminUnlocked){ const p = prompt('Enter admin password:'); if(p!==ADMIN_PASSWORD){return alert('Wrong password');} }
+    loadConfig().then(cfg=>{
+      CONFIG = JSON.parse(JSON.stringify(cfg));
+      showAdminEditor();
+    })
+  }
+
+  function showAdminEditor(){
+    const w = window.open('','_blank','width=900,height=700');
+    w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Admin Editor</title></head><body style="font-family:Arial;padding:12px">');
+    w.document.write('<h2>Admin Editor — Edit day entries and download config.json</h2>');
+    w.document.write('<p>After editing click: <strong>Download config.json</strong> and upload to your host (GitHub) replacing the existing config.json.</p>');
+    w.document.write('<div id="editor"></div>');
+    w.document.write('<button id="download">Download config.json</button> <button id="sample">Download sample image pack (links)</button>');
+    w.document.write('<script>const cfg='+JSON.stringify(CONFIG)+'; function build(){const el=document.getElementById("editor");el.innerHTML="";cfg.days.sort((a,b)=>a.day-b.day).forEach(d=>{const s=document.createElement("div");s.style.border="1px solid #ddd";s.style.padding="8px";s.style.margin="8px 0";s.innerHTML=`<b>Day ${d.day}</b> <input style="width:120px" value="'+(d.label||'')+'" class="lbl"/> <br/>Image URL: <input style="width:80%" value="'+(d.image||'')+'" class="img"/> <br/>Lines (one per line): <br/><textarea class="lines" style="width:80%;height:80px">'+((d.lines||[]).join('\\n'))+'</textarea><br/>BG: <input value="'+(d.bg||'')+'" class="bg"/> TextColor: <input value="'+(d.textColor||'')+'" class="txt"/> <br/>`;el.appendChild(s);});}
+    build();
+    document.getElementById("download").onclick=function(){
+      cfg.days.forEach((d,i)=>{ const s=document.getElementsByClassName("lbl")[i]; const img=document.getElementsByClassName("img")[i]; const lines=document.getElementsByClassName("lines")[i]; const bg=document.getElementsByClassName("bg")[i]; const txt=document.getElementsByClassName("txt")[i]; d.label=s.value; d.image=img.value; d.lines = lines.value.split("\\n").filter(Boolean); d.bg=bg.value; d.textColor=txt.value; });
+      const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});
+      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="config.json"; a.click();
+    }
+    document.getElementById("sample").onclick=function(){
+      const sample = cfg.days.map(d=>d.image).filter(Boolean).join("\\n"); const blob=new Blob([sample],{type:"text/plain"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="image-links.txt"; a.click(); }
+    </script>');
+    w.document.close();
+  }
+
+  render();
+  setInterval(showCountdown, 30*1000);
+  </script>
+</body>
+</html>
