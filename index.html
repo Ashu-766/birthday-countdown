@@ -3,183 +3,104 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Birthday Countdown</title>
+<title>Birthday Countdown 💖</title>
 <style>
-:root{
-  --bg:#fff9fb;
-  --card:#ffffffcc;
-  --accent:#d88fbf;
-  --accent-2:#b89ad6;
-  --gold:#c99a48;
-  --text:#333;
-  --radius:16px;
+body{
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#ffe6f0,#fff5fa);
+  color:#333;
+  margin:0;
+  text-align:center;
 }
-*{box-sizing:border-box}
-body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:linear-gradient(135deg,var(--bg), #fff); color:var(--text); min-height:100vh}
-.hero{padding:28px 16px; text-align:center; position:relative}
-.title{font-size:28px; font-weight:700; color:var(--accent-2); margin:6px}
-.subtitle{color:#6b5b6a; margin-bottom:12px}
-.countdown{font-size:18px; margin-top:6px}
-.container{max-width:720px;margin:0 auto;padding:12px}
-
-.grid{display:grid;grid-template-columns:1fr;gap:14px}
-.day-card{background:var(--card); padding:18px;border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
-.day-card.locked{opacity:0.6; filter:grayscale(0.1)}
-.day-info{flex:1}
-.day-title{font-weight:700;color:var(--accent)}
-.day-date{font-size:13px;color:#6b5b6a;margin-top:4px}
-.day-thumb{width:110px;height:78px;border-radius:12px;object-fit:cover;flex-shrink:0;background:linear-gradient(45deg,var(--accent),var(--accent-2))}
-.open-btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:none;padding:8px 12px;border-radius:10px;cursor:pointer}
-
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:all .18s}
-.modal.show{opacity:1;pointer-events:auto}
-.card{background:linear-gradient(180deg,#fff,#fff);padding:18px;border-radius:14px;max-width:700px;width:96%;max-height:86vh;overflow:auto;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
-.modal-head{display:flex;align-items:center;justify-content:space-between}
-.modal-img{width:100%;height:320px;object-fit:cover;border-radius:10px;margin-top:12px}
-.lines{margin-top:12px;font-size:15px;color:#333}
-
-.hearts{position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
-.heart{position:absolute;width:28px;height:28px;background:radial-gradient(circle at 30% 30%, #fff8, transparent),linear-gradient(135deg,var(--accent),var(--accent-2));transform:rotate(-25deg);clip-path:polygon(50% 0%, 100% 30%, 80% 80%, 50% 100%, 20% 80%, 0% 30%);}
-
-.confetti-canvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:60}
-
-.admin-btn{position:fixed;right:14px;bottom:18px;background:#111;padding:10px 12px;border-radius:12px;color:white;cursor:pointer;z-index:70}
-.admin-lock{position:fixed;right:14px;bottom:72px;background:var(--gold);padding:10px 12px;border-radius:12px;color:#111;cursor:pointer;z-index:70}
-
-.final-burst{background:linear-gradient(90deg,var(--accent-2),var(--gold));color:white;padding:14px;border-radius:12px;text-align:center;font-weight:700;box-shadow:0 8px 30px rgba(0,0,0,0.12)}
-
-@media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
+h1{color:#b14ba2;margin:20px 0 10px}
+h3{color:#5e5e5e;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;max-width:900px;margin:0 auto;padding:10px}
+.card{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+.card.locked{opacity:0.6;filter:grayscale(0.4)}
+.card img{width:100%;border-radius:12px}
+button{
+  background:linear-gradient(90deg,#ff7eb9,#ff65a3);
+  border:none;
+  color:white;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:8px;
+}
+#modal{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  display:none;align-items:center;justify-content:center;
+}
+.modal-content{
+  background:white;padding:20px;border-radius:14px;max-width:600px;width:90%;
+}
+.modal-content img{width:100%;border-radius:10px}
+.modal-content p{margin:8px 0;color:#444}
 </style>
 </head>
 <body>
-<div class="hearts" id="hearts"></div>
-<canvas class="confetti-canvas" id="confetti"></canvas>
-<div class="hero">
-  <div class="title">Birthday Countdown — For Her</div>
-  <div class="subtitle">Soft pastel romantic • Elegant minimalist</div>
-  <div class="countdown" id="timeUntil"></div>
-</div>
+<h1>🎂 Birthday Countdown for Minnu (Nemo)</h1>
+<h3>Every day is special with you 💖</h3>
+<div id="countdown"></div>
+<div class="grid" id="days"></div>
 
-<div class="container">
-  <div id="finalBanner" style="display:none" class="final-burst">Happy Birthday! 🎉</div>
-  <div class="grid" id="daysGrid"></div>
-</div>
-
-<div id="modal" class="modal">
-  <div class="card">
-    <div class="modal-head"><div id="modalTitle"></div><button onclick="closeModal()">Close</button></div>
-    <img id="modalImage" class="modal-img" src="" alt="photo">
-    <div id="modalLines" class="lines"></div>
+<div id="modal">
+  <div class="modal-content">
+    <h2 id="modalTitle"></h2>
+    <img id="modalImg" src="" alt="">
+    <div id="modalText"></div>
+    <button onclick="closeModal()">Close</button>
   </div>
 </div>
 
-<button class="admin-btn" onclick="openAdmin()">Admin</button>
-<button class="admin-lock" onclick="toggleAdminLock()">🔒</button>
-
 <script>
-const ADMIN_PASSWORD = '1234';
-const BIRTHDAY = '2025-10-26';
-
-// Embed your 26-day config directly
-const CONFIG = {
-  "title": "Happy Birthday Baby",
-  "musicUrl": "",
-  "days": [
-    // Example: fill in all 26 days here (your previous JSON)
-    {"day":1,"label":"Day 1 - Wed Oct 01 2025","image":"","lines":["Every day with you is special 💖"],"bg":"","textColor":""},
-    {"day":2,"label":"Day 2 - Thu Oct 02 2025","image":"","lines":["You light up my world ✨"],"bg":"","textColor":""},
-    {"day":3,"label":"Day 3 - Fri Oct 03 2025","image":"","lines":["Your smile makes my day 😍"],"bg":"","textColor":""},
-    {"day":4,"label":"Day 4 - Sat Oct 04 2025","image":"","lines":["Thinking of you always 💌"],"bg":"","textColor":""},
-    {"day":5,"label":"Day 5 - Sun Oct 05 2025","image":"","lines":["Little moments with you ❤️"],"bg":"","textColor":""},
-    {"day":6,"label":"Day 6 - Mon Oct 06 2025","image":"","lines":["You are my sunshine ☀️"],"bg":"","textColor":""},
-    {"day":7,"label":"Day 7 - Tue Oct 07 2025","image":"","lines":["Hugs and kisses for you 🤗"],"bg":"","textColor":""},
-    {"day":8,"label":"Day 8 - Wed Oct 08 2025","image":"","lines":["Every memory with you is golden 🌸"],"bg":"","textColor":""},
-    {"day":9,"label":"Day 9 - Thu Oct 09 2025","image":"","lines":["You make life sweeter 🍫"],"bg":"","textColor":""},
-    {"day":10,"label":"Day 10 - Fri Oct 10 2025","image":"","lines":["Your laughter is magic ✨"],"bg":"","textColor":""},
-    {"day":11,"label":"Day 11 - Sat Oct 11 2025","image":"","lines":["Forever thinking of you 💖"],"bg":"","textColor":""},
-    {"day":12,"label":"Day 12 - Sun Oct 12 2025","image":"","lines":["You’re my favorite person 😘"],"bg":"","textColor":""},
-    {"day":13,"label":"Day 13 - Mon Oct 13 2025","image":"","lines":["Every second with you counts ⏳"],"bg":"","textColor":""},
-    {"day":14,"label":"Day 14 - Tue Oct 14 2025","image":"","lines":["Love you endlessly 💞"],"bg":"","textColor":""},
-    {"day":15,"label":"Day 15 - Wed Oct 15 2025","image":"","lines":["You complete me 💕"],"bg":"","textColor":""},
-    {"day":16,"label":"Day 16 - Thu Oct 16 2025","image":"","lines":["Always in my heart 💓"],"bg":"","textColor":""},
-    {"day":17,"label":"Day 17 - Fri Oct 17 2025","image":"","lines":["You’re my treasure 🥰"],"bg":"","textColor":""},
-    {"day":18,"label":"Day 18 - Sat Oct 18 2025","image":"","lines":["Forever yours 💗"],"bg":"","textColor":""},
-    {"day":19,"label":"Day 19 - Sun Oct 19 2025","image":"","lines":["You’re my everything 💖"],"bg":"","textColor":""},
-    {"day":20,"label":"Day 20 - Mon Oct 20 2025","image":"","lines":["Thinking of you non-stop 💭"],"bg":"","textColor":""},
-    {"day":21,"label":"Day 21 - Tue Oct 21 2025","image":"","lines":["You make life beautiful 🌷"],"bg":"","textColor":""},
-    {"day":22,"label":"Day 22 - Wed Oct 22 2025","image":"","lines":["Your hugs are my home 🏡"],"bg":"","textColor":""},
-    {"day":23,"label":"Day 23 - Thu Oct 23 2025","image":"","lines":["Counting down to you 🎉"],"bg":"","textColor":""},
-    {"day":24,"label":"Day 24 - Fri Oct 24 2025","image":"","lines":["Love grows every day 🌹"],"bg":"","textColor":""},
-    {"day":25,"label":"Day 25 - Sat Oct 25 2025","image":"","lines":["Tomorrow is your day 🎂"],"bg":"","textColor":""},
-    {"day":26,"label":"Day 26 - Sun Oct 26 2025","image":"","lines":["Happy Birthday my love! You mean the world to me 💖"],"bg":"","textColor":""}
-  ]
-};
-
-// --- Countdown and render logic ---
-function daysBetween(start, end){
-  const ms = 24*60*60*1000;
-  return Math.round((end-start)/ms);
+const birthday = new Date("2025-10-26");
+function updateCountdown(){
+  const now=new Date();
+  const diff=birthday-now;
+  if(diff<=0){document.getElementById("countdown").innerText="🎉 It's her Birthday Today!";return;}
+  const d=Math.floor(diff/(1000*60*60*24));
+  const h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  document.getElementById("countdown").innerText=`${d} days ${h} hrs to go 💫`;
 }
+updateCountdown();
+setInterval(updateCountdown,60000);
 
-function formatShort(d){ return d.toDateString(); }
-
-function showCountdown(){
-  const now = new Date();
-  const target = new Date(BIRTHDAY+'T00:00:00');
-  const ms = target - now;
-  if(ms<=0){document.getElementById('timeUntil').textContent = 'It\'s her birthday!'; return}
-  const days = Math.floor(ms/(24*60*60*1000));
-  const hrs = Math.floor(ms%(24*60*60*1000)/(1000*60*60));
-  const mins = Math.floor(ms%(1000*60*60)/(1000*60));
-  document.getElementById('timeUntil').textContent = `Time until birthday: ${days}d ${hrs}h ${mins}m`;
-}
-
-function render(){
-  const cfg = CONFIG;
-  const grid = document.getElementById('daysGrid');
-  grid.innerHTML='';
-  const days = cfg.days.slice().sort((a,b)=>a.day-b.day);
-  const today = new Date();
-  const bd = new Date(BIRTHDAY+'T00:00:00');
-
-  const isBirthday = (new Date().toDateString() === bd.toDateString());
-  if(isBirthday){
-    document.getElementById('finalBanner').style.display='block';
-  }
-
-  for(const d of days){
-    const dayDate = new Date(bd.getTime() - (26 - d.day)*24*60*60*1000);
-    const unlocked = (new Date().setHours(0,0,0,0) >= new Date(dayDate).setHours(0,0,0,0));
-    const card = document.createElement('div');
-    card.className='day-card'+(unlocked? '':' locked');
-    card.style.background = d.bg || 'var(--card)';
-    const img = document.createElement('img'); img.className='day-thumb'; img.src=d.image||'';
-    const info = document.createElement('div'); info.className='day-info';
-    const title = document.createElement('div'); title.className='day-title'; title.textContent=d.label || `Day ${d.day}`;
-    const date = document.createElement('div'); date.className='day-date'; date.textContent = formatShort(dayDate);
-    const btn = document.createElement('button'); btn.className='open-btn'; btn.textContent = unlocked? 'Open':'Locked';
-    btn.disabled = !unlocked;
-    btn.onclick = ()=>openDay(d);
-    info.appendChild(title); info.appendChild(date); info.appendChild(btn);
-    card.appendChild(img); card.appendChild(info);
+fetch("days.json")
+.then(r=>r.json())
+.then(data=>{
+  const grid=document.getElementById("days");
+  const today=new Date();
+  data.days.forEach(day=>{
+    const dayDate=new Date("2025-10-01");
+    dayDate.setDate(dayDate.getDate()+day.day-1);
+    const unlocked=today>=dayDate;
+    const card=document.createElement("div");
+    card.className="card"+(unlocked?"":" locked");
+    card.innerHTML=`<img src="${day.image}" alt="">
+                    <h3>${day.title}</h3>
+                    <p>${dayDate.toDateString()}</p>`;
+    const btn=document.createElement("button");
+    btn.textContent=unlocked?"Open":"Locked";
+    btn.disabled=!unlocked;
+    btn.onclick=()=>openModal(day);
+    card.appendChild(btn);
     grid.appendChild(card);
-  }
+  });
+});
 
-  showCountdown();
+function openModal(day){
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("modalTitle").innerText=day.title;
+  document.getElementById("modalImg").src=day.image;
+  document.getElementById("modalText").innerHTML=day.lines.map(l=>`<p>${l}</p>`).join("");
 }
-
-function openDay(day){
-  document.getElementById('modal').classList.add('show');
-  document.getElementById('modalTitle').textContent = day.label || `Day ${day.day}`;
-  document.getElementById('modalImage').src = day.image || '';
-  const linesEl = document.getElementById('modalLines'); linesEl.innerHTML='';
-  (day.lines||[]).forEach(l=>{ const p=document.createElement('p'); p.textContent=l; linesEl.appendChild(p);});
-}
-
-function closeModal(){ document.getElementById('modal').classList.remove('show'); }
-
-render();
-setInterval(showCountdown, 30*1000);
+function closeModal(){document.getElementById("modal").style.display="none";}
 </script>
 </body>
 </html>
